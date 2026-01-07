@@ -288,6 +288,7 @@
         </a-assets>
 
         <a-marker preset="hiro" id="hiro-marker">
+            <a-entity id="ar-content" scale="1.6 1.6 1.6" position="0 0.08 0">
             <!-- Buku 1 -->
             <a-box 
                 id="book1"
@@ -364,12 +365,13 @@
             <a-text 
                 id="ratio-text"
                 value="2 Buku : 3 Pensil = 2:3" 
-                position="0 -0.8 0" 
+                position="0 -0.9 0" 
                 align="center" 
                 color="#667eea"
-                width="3"
+                width="4.5"
                 font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
             ></a-text>
+            </a-entity>
         </a-marker>
 
         <a-entity camera></a-entity>
@@ -413,6 +415,7 @@
                     markerFound = true;
                     document.getElementById('instructions').classList.add('hidden');
                     document.getElementById('info-panel').classList.remove('hidden');
+                    updateARScale();
                     startLearningSequence();
                 });
                 
@@ -466,7 +469,7 @@
             objectsToHighlight.forEach(objId => {
                 const obj = document.getElementById(objId);
                 if(obj) {
-                    obj.setAttribute('scale', '1.4 1.4 1.4');
+                    obj.setAttribute('scale', '1.2 1.2 1.2');
                     
                     // Add glow effect
                     if(objId.includes('book')) {
@@ -503,6 +506,23 @@
             });
         }
         
+        // Responsive AR scaling for different screen sizes
+        function updateARScale() {
+            const content = document.getElementById('ar-content');
+            if (!content) return;
+            let scale = 1.6; // default for desktop
+            if (window.innerWidth <= 600) {
+                scale = 1.2; // mobile
+            } else if (window.innerWidth <= 900) {
+                scale = 1.4; // tablet / small laptop
+            }
+            content.setAttribute('scale', `${scale} ${scale} ${scale}`);
+        }
+
+        // Update scale on load and resize
+        window.addEventListener('resize', updateARScale);
+        window.addEventListener('load', updateARScale);
+
         // Prevent screen dimming
         if ('wakeLock' in navigator) {
             navigator.wakeLock.request('screen').catch(err => {
